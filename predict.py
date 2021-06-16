@@ -118,13 +118,13 @@ def _make_submission_files(pred, image_id, affine):
 
 def predict(args):
     batch_size = 16
-    num_workers = 4
+    num_workers = 2
     postprocess = True if args.postprocess == "True" else False
 
     model = UNet(1, 1, first_out_channels=16)
     model.eval()
     if args.model_path is not None:
-        model_weights = torch.load(args.model_path)
+        model_weights = torch.load(args.model_path, map_location='cpu')
         model.load_state_dict(model_weights)
     model = nn.DataParallel(model).cuda()
 

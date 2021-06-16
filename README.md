@@ -65,18 +65,18 @@ We collect a large-scale rib fracture CT dataset, named RibFrac Dataset as a ben
 ### Training
 To train the FracNet model, run the following in command line:
 ```bash
-python -m main --train_image_dir <training_image_directory> --train_label_dir <training_label_directory> --val_image_dir <validation_image_directory> --val_label_dir <validation_label_directory>
+python main.py --train_image_dir /kaggle/input/trainfile --train_label_dir /kaggle/input/trainlabel --val_image_dir /kaggle/input/valfile --val_label_dir /kaggle/input/vallabel --save_model True
 ```
 
 ### Prediction
 To generate prediction, run the following in command line:
 ```bash
-python -m predict --image_dir <image_directory> --pred_dir <predition_directory> --model_path <model_weight_path>
+python predict.py --image_dir /kaggle/input/testfile --pred_dir /kaggle/working --model_path /kaggle/input/bestmodel/model_weights.pth
 ```
 
 In the [predict.py](predict.py), we adopt a post-processing procedure of [removing low-probability regions](predict.py#L18), [spine regions](predict.py#L24), and [small objects](predict.py#L48). This procedure leads to fewer false negatives. You may also skip the post-processing by setting `--postprocess False` in the command line argument and check the raw output.
 
-***Note***: This project aims at a prototype for RibFrac Challenge; However, as the challenge data provider, we would like to avoid unintended data leakage. Therefore, we did not provide full details for the models, including those in both training and inference stages. Nevertheless, it is guaranteed that the performance in the EBioMedicine paper could be reproduced with this one-stage FracNet using 3D UNet as backbone. See more discussion in this [issue](https://github.com/M3DV/FracNet/issues/7).
+***Note***: This project aims at a prototype for RibFrac Challenge; However, as the challenge data provider, we would like to avoid unintended data leakage. Therefore, we did no<audio src="C:/Users/49911/Desktop/%E4%B8%87%E7%96%86.mp3"></audio>t provide full details for the models, including those in both training and inference stages. Nevertheless, it is guaranteed that the performance in the EBioMedicine paper could be reproduced with this one-stage FracNet using 3D UNet as backbone. See more discussion in this [issue](https://github.com/M3DV/FracNet/issues/7).
 
 
 ### Evaluation

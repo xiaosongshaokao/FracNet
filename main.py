@@ -1,11 +1,12 @@
 from functools import partial
 
 import torch.nn as nn
+import torch
+import os
 from fastai.basic_train import Learner
 from fastai.train import ShowGraph
 from fastai.data_block import DataBunch
 from torch import optim
-
 from dataset.fracnet_dataset import FracNetTrainDataset
 from dataset import transforms as tsfm
 from utils.metrics import dice, recall, precision, fbeta_score
@@ -20,7 +21,7 @@ def main(args):
     val_label_dir = args.val_label_dir
 
     batch_size = 4
-    num_workers = 4
+    num_workers = 2
     optimizer = optim.SGD
     criterion = MixLoss(nn.BCEWithLogitsLoss(), 0.5, DiceLoss(), 1)
 
@@ -30,6 +31,8 @@ def main(args):
     fbeta_score_partial = partial(fbeta_score, thresh=thresh)
 
     model = UNet(1, 1, first_out_channels=16)
+    params = torch.load('/kaggle/input/premodel/model_weights712.pth')
+    model.load_state_dict(params)
     model = nn.DataParallel(model.cuda())
 
     transforms = [
@@ -57,7 +60,7 @@ def main(args):
     )
 
     learn.fit_one_cycle(
-        200,
+        45,
         1e-1,
         pct_start=0,
         div_factor=1000,
@@ -65,9 +68,11 @@ def main(args):
             ShowGraph(learn),
         ]
     )
-
+    os.chdir('./')
+    os.chdir('/kaggle/working')
+    os.mknod('model_weights.pth')
     if args.save_model:
-        torch.save(model.module.state_dict(), "./model_weights.pth")
+        torch.save(model.module.state_dict(), "/kaggle/working/model_weights.pth")
 
 
 if __name__ == "__main__":
